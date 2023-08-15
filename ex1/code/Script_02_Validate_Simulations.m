@@ -23,13 +23,14 @@ patch(mesh.c_x,mesh.c_y,mesh.z_tri,'LineStyle','none'); hold on;
 colormap(cmap); 
 cb = colorbar;
 cb.FontSize = 15; 
-
+% Add locations of HWM
 plot([hwm.X],[hwm.Y],'wx','LineWidth',1);
 set(gca,'Color',[0.75 0.75 0.75]);
-
+% Add dams
 plot(dams(1).X,dams(1).Y,'k-','LineWidth',2); 
 plot(dams(2).X,dams(2).Y,'k-','LineWidth',2); 
 
+exportgraphics(gcf,'Figure_1.jpg','Resolution',400);
 
 figure(2); set(gcf,'Position',[10 10 1200 800]);
 k = 1;
@@ -62,6 +63,7 @@ end
 leg.Position(1) = axs(15).Position(1);
 leg.Position(2) = axs(19).Position(2) + axs(19).Position(4) - leg.Position(4);
 
+exportgraphics(gcf,'Figure_2.jpg','Resolution',400);
 
 hmax = 3; hmin = 0.1;
 figure(3);
@@ -81,6 +83,9 @@ set(gca,'XTick',[0.1:0.1:0.5 1 2 3],'YTick',[0.1:0.1:0.5 1 2 3],'FontSize',14);
 set(gca,'FontSize',13);
 xlabel('High Water Marks [m]','FontSize',15,'FontWeight','bold');
 ylabel('Simulation [m]','FontSize',15,'FontWeight','bold');
+
+exportgraphics(gcf,'Figure_3.jpg','Resolution',400);
+
 
 % mdl = fitlm([hwm.h],[hwm.sim(1).h]);
 % a = mdl.Coefficients.Estimate(1);

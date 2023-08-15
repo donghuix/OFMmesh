@@ -5,11 +5,11 @@ function [xbnd,ybnd,gages,hwm,mesh,dams] = read_data(names,Output,proj,ngrids)
     end
 
     % Read boundary as longitude and latitude
-    bndfile = '../data/turning.json';
+    bndfile = '../turning.json';
     [xbnd,ybnd,dem,xdem,ydem] = PreProcess(bndfile,'30m',false);
     
     % Read USGS gages
-    fileID = fopen('../data/usgs/site_information');
+    fileID = fopen('../usgs/site_information');
     C = textscan(fileID,'%s%s%s%s%s%s%s%s%s%s%s%s','HeaderLines',33,'Delimiter','\t');
     fclose(fileID);
     gages = struct([]);
@@ -26,8 +26,8 @@ function [xbnd,ybnd,gages,hwm,mesh,dams] = read_data(names,Output,proj,ngrids)
     
     % Read mesh
     mesh = struct([]);
-    [mesh(1).v_x,mesh(1).v_y,mesh(1).v_z,mesh(1).v_b] = plotbcode([],['../mesh/Turning_30m.bcode']);
-    mesh(1).tri = ncread(['../mesh/Turning_30m.exo'],'connect1');
+    [mesh(1).v_x,mesh(1).v_y,mesh(1).v_z,mesh(1).v_b] = plotbcode([],['../meshes/Turning_30m.bcode']);
+    mesh(1).tri = ncread(['../meshes/Turning_30m.exo'],'connect1');
 
     nov = length(mesh(1).v_x)/2; 
     noc = size(mesh(1).tri,2); % number of cells
@@ -42,7 +42,7 @@ function [xbnd,ybnd,gages,hwm,mesh,dams] = read_data(names,Output,proj,ngrids)
 
     % Read High Water Marks
     hwm = struct([]);
-    T_hwm  = readtable('../data/hwm/Harvey_HWMs_20180322.csv');
+    T_hwm  = readtable('../hwm/Harvey_HWMs_20180322.csv');
     in_hwm = inpolygon(T_hwm.longitude,T_hwm.latitude,xbnd,ybnd);
     hwm(1).X = T_hwm.longitude(in_hwm);
     hwm(1).Y = T_hwm.latitude(in_hwm);
@@ -55,10 +55,10 @@ function [xbnd,ybnd,gages,hwm,mesh,dams] = read_data(names,Output,proj,ngrids)
     [xbnd,ybnd] = projfwd(proj,ybnd,xbnd);
     
     % add reservoir boundary
-    tmp = shaperead('../data/dams/dam1.shp');
+    tmp = shaperead('../dams/dam1.shp');
     dams(1).X = tmp.X + 0.00025;
     dams(1).Y = tmp.Y - 0.001;
-    tmp = shaperead('../data/dams/dam2.shp');
+    tmp = shaperead('../dams/dam2.shp');
     dams(2).X = tmp.X + 0.00036;
     dams(2).Y = tmp.Y - 0.00071;
     
