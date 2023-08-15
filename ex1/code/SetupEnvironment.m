@@ -26,7 +26,7 @@ function [Output, proj] = SetupEnvironment()
         addpath('/qfs/people/xudo627/mylib/m/');
         addpath('/qfs/people/xudo627/getPanoply_cMap/');
         addpath('/compyfs/xudo627/ofm_petsc/topotoolbox/');
-        ddpath('/compyfs/xudo627/ofm_petsc/topotoolbox/utilities/');
+        addpath('/compyfs/xudo627/ofm_petsc/topotoolbox/utilities/');
         addpath('/compyfs/xudo627/ofm_petsc/jigsaw-matlab/');
         addpath('/compyfs/xudo627/ofm_petsc/Matlab_Scripts/');
         addpath('/qfs/people/xudo627/Setup-E3SM-Mac/matlab-scripts-to-process-inputs/');
