@@ -68,7 +68,7 @@ function [gages,hwm,mesh] = read_outputs(gages,hwm,names,Output,ngrids)
     NB = load('Turning_30m_noBC_SR_Validations.mat');
     delete('Turning_30m_Validations.mat');
     delete('Turning_30m_SR_Validations.mat');
-    delete('Turning_30m_noBC_Validations.mat');
+    delete('Turning_30m_noBC_SR_Validations.mat');
 
     % 
     hmark1 = max(SR.hmark,[],3); dist1 = abs(hmark1 - [hwm.h]);  

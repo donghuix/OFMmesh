@@ -18,6 +18,7 @@ function Output = SetupEnvironment()
         addpath('/Users/xudo627/Developments/Setup-E3SM-Mac/matlab-scripts-to-process-inputs/');
         % https://github.com/g2e/m_map
         addpath('/Users/xudo627/Developments/m_map/');
+        addpath('/Users/xudo627/Developments/petsc/share/petsc/matlab/');
         Output = '/Users/xudo627/Developments/ofm_petsc/Output/';
 
     elseif strcmp(home,'/qfs/people/xudo627')
@@ -32,6 +33,7 @@ function Output = SetupEnvironment()
         addpath('/qfs/people/xudo627/Setup-E3SM-Mac/matlab-scripts-to-process-inputs/');
         addpath('/qfs/people/xudo627/inpoly/');
         addpath('/qfs/people/xudo627/m_map/');
+        addpath('//qfs/people/xudo627/petsc/share/petsc/matlab/');
         Output = '/compyfs/xudo627/ofm_petsc/Output/';
 
     else
