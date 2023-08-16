@@ -6,7 +6,7 @@ function [gages,hwm,mesh] = read_outputs(gages,hwm,names,Output,ngrids)
     
     % Read mesh
     mesh = struct([]);
-    [mesh(1).v_x,mesh(1).v_y,mesh(1).v_z,mesh(1).v_b] = plotbcode([],'../meshes/Turning_30m.bcode');
+    [mesh(1).v_x,mesh(1).v_y,mesh(1).v_z,mesh(1).v_b] = readbcode('../meshes/Turning_30m.bcode');
     mesh(1).tri = ncread('../meshes/Turning_30m.exo','connect1');
 
     nov = length(mesh(1).v_x)/2; 
