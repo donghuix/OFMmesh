@@ -24,11 +24,11 @@ elseif strcmp(fExt,'.json')
     fclose(fid);
 end
 xbnd = xbnd(:); ybnd = ybnd(:);
-if ~exist('./DEM','dir')
-    mkdir('./DEM');
+if ~exist([fundir '/DEM/'],'dir')
+    mkdir([fundir '/DEM/']);
 end
 
-fid   = fopen([fundir './DEM/NED_' RES '.txt']);
+fid   = fopen([fundir '/DEM/NED_' RES '.txt']);
 tline = fgetl(fid);
 tiles = cell(2,1);
 links = cell(2,1);
@@ -61,8 +61,8 @@ for i = 1 : length(tiles)
     polyout  = intersect(ploybnd,polycell);
     if ~isempty(polyout.Vertices)
         idx(i) = true;
-        if ~exist([fundir './DEM/' files{i}],'file')
-            [status,cmdout] = system(['/usr/local/bin/wget ' links{i} ' -P ../DEM/'],'-echo');
+        if ~exist([fundir '/DEM/' files{i}],'file')
+            [status,cmdout] = system(['/opt/homebrew/bin/wget ' links{i} ' -P ' fundir '/DEM/'],'-echo');
             if status > 0
                 disp(cmdout);
             end
@@ -84,7 +84,7 @@ for i = 1 : length(idx)
      plot(polycell);
 end
 
-dem = double(imread([fundir '/../DEM/' files{idx}]));
+dem = double(imread([fundir '/DEM/' files{idx}]));
 dem(dem < -9999) = NaN;
 
 [ny,nx] = size(dem);

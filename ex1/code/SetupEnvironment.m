@@ -1,4 +1,4 @@
-function [Output, proj] = SetupEnvironment()
+function Output = SetupEnvironment()
 
     home = getenv('HOME');
 
@@ -43,6 +43,4 @@ function [Output, proj] = SetupEnvironment()
     addpath('../usgs/');
     addpath('../../');
 
-    % Projection coordinates
-    proj = projcrs(32610);
 end
