@@ -1,6 +1,6 @@
 clear;close all;clc;
 
-[Output, proj] = SetupEnvironment();
+Output = SetupEnvironment();
 if exist('aux.mat','file')
     load('aux.mat');
 else
@@ -11,7 +11,7 @@ names = {'Turning_30m','Turning_30m_SR','Turning_30m_noBC'};
 if exist('../data/depth.mat','file')
     load('../data/depth.mat');
 else
-    [xbnd,ybnd,gages,hwm,mesh,dams] = read_data(names,Output,proj,200);
+    [gages,hwm,mesh] = read_outputs(gages,hwm,names,Output,200);
     save('../data/depth.mat','xbnd','ybnd','gages','hwm','mesh','dams');
 end
 
