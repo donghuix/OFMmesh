@@ -11,7 +11,7 @@ names = {'Turning_30m','Turning_30m_SR','Turning_30m_noBC_SR'};
 if exist('../data/depth.mat','file')
     load('../data/depth.mat');
 else
-    [gages,hwm,mesh] = read_outputs(gages,hwm,names,Output,200);
+    [gages,hwm,mesh] = read_depth(gages,hwm,names,Output,200);
     save('../data/depth.mat','xbnd','ybnd','gages','hwm','mesh','dams');
 end
 

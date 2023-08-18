@@ -40,7 +40,7 @@ function [Output, exportfig] = SetupEnvironment()
         addpath('//qfs/people/xudo627/petsc/share/petsc/matlab/');
         Output = '/compyfs/xudo627/ofm_petsc/Output/';
         
-        exportfig = flase; % exportgraphics is not available on compy matlab
+        exportfig = false; % exportgraphics is not available on compy matlab
 
     else
         disp('Need to install necessary packages!')

@@ -1,4 +1,4 @@
-function [gages,hwm,mesh] = read_outputs(gages,hwm,names,Output,ngrids)
+function [gages,hwm,mesh] = read_depth(gages,hwm,names,Output,ngrids)
     
     if nargin == 3
         ngrids = 200;
