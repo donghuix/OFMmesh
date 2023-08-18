@@ -24,7 +24,7 @@ function [inundf,inundv,hdiff,inunds] = read_CF(Output, thres)
     % Inundation Fraction
     inundf = NaN(length(thres),length(inunds),119,2);
     % Inundation Volume
-    inundv = NaN(length(thres),length(inunds),119,2);
+    inundv = NaN(length(thres),119,2);
     
     for time = 1 : 119
         % Read simulated water depth [m] from outputs
@@ -66,7 +66,9 @@ function [inundf,inundv,hdiff,inunds] = read_CF(Output, thres)
                 end
                 
                 inundf(i,j,time,1) = nansum(tmpa(tmpi))./nansum(tmpa);
-                inundv(i,j,time,1) = nansum(tmph.*tmpa);
+                if j == 1
+                    inundv(i,time,1) = nansum(tmph.*tmpa);
+                end
         
                 tmph = hnoBC(ind);
                 tmpa = area(ind);
@@ -77,7 +79,9 @@ function [inundf,inundv,hdiff,inunds] = read_CF(Output, thres)
                 end
                 
                 inundf(i,j,time,2) = nansum(tmpa(tmpi))./nansum(tmpa);
-                inundv(i,j,time,2) = nansum(tmph.*tmpa);
+                if j == 1
+                    inundv(i,time,2) = nansum(tmph.*tmpa);
+                end
             end
         end
     end
