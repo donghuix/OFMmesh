@@ -14,7 +14,6 @@ function [inundf,inundv,hdiff,inunds] = read_CF(Output, thres)
     dist = sqrt((xc-xo).^2 + (yc-yo).^2);
     clear tri;
     
-    hdiff  = NaN(noc,1);
     inunds = [0.01; 0.12; 0.46; 1; 1.70];
     % inund1 = find(arr(1,:) > 0.01 & arr(1,:) <= 0.12); % Less than Ankle
     % inund2 = find(arr(1,:) > 0.12 & arr(1,:) <= 0.46); % Ankle - Knee
@@ -44,10 +43,10 @@ function [inundf,inundv,hdiff,inunds] = read_CF(Output, thres)
         disp(fnm1);
         
         if time == 1
-            hdiff = hwtBC - hnoBC;
+            hdiff = hwtBC' - hnoBC';
         else
-            tmp   = hwtBC - hnoBC;
-            hdiff = max([hdiff tmp],2);
+            tmp   = hwtBC' - hnoBC';
+            hdiff = max([hdiff tmp],[],2);
         end
     
         for i = 1 : length(thres)
