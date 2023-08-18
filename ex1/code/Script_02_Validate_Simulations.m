@@ -1,6 +1,6 @@
 clear;close all;clc;
 
-Output = SetupEnvironment();
+[Output, exportfig] = SetupEnvironment();
 if exist('aux.mat','file')
     load('aux.mat');
 else
@@ -23,7 +23,7 @@ if Pix_SS(3)/Pix_SS(4) > 1.6
     fd(2) = 1000;
 end
 
-figure(1); set(gcf,'Position',[10 10 1200 800]);
+fig1 = figure(1); set(gcf,'Position',[10 10 1200 800]);
 cmap = getPanoply_cMap('GIST_earth');
 patch(mesh.c_x,mesh.c_y,mesh.z_tri,'LineStyle','none'); hold on;
 colormap(cmap); 
@@ -36,9 +36,7 @@ set(gca,'Color',[0.75 0.75 0.75]);
 plot(dams(1).X,dams(1).Y,'k-','LineWidth',2); 
 plot(dams(2).X,dams(2).Y,'k-','LineWidth',2); 
 
-exportgraphics(gcf,'Figure_1.jpg','Resolution',400);
-
-figure(2); set(gcf,'Position',[10 10 1200 800]);
+fig2 = figure(2); set(gcf,'Position',[10 10 1200 800],'renderer','Painters');
 k = 1;
 plot(xbnd,ybnd,'k-','LineWidth',2); hold on; grid on;
 for i = 1:length(gages)
@@ -69,10 +67,8 @@ end
 leg.Position(1) = axs(15).Position(1);
 leg.Position(2) = axs(19).Position(2) + axs(19).Position(4) - leg.Position(4);
 
-exportgraphics(gcf,'Figure_2.jpg','Resolution',400);
-
 hmax = 3; hmin = 0.1;
-figure(3);
+fig3 = figure(3);
 loglog([hmin hmax],[hmin hmax],'-','Color',[220,20,60]./255,'LineWidth',3);hold on; grid on;
 r = 1/2;
 loglog([hmin/r hmax],[hmin hmax*r],'--','Color',[220,20,60]./255,'LineWidth',2);
@@ -90,8 +86,11 @@ set(gca,'FontSize',13);
 xlabel('High Water Marks [m]','FontSize',15,'FontWeight','bold');
 ylabel('Simulation [m]','FontSize',15,'FontWeight','bold');
 
-exportgraphics(gcf,'Figure_3.jpg','Resolution',400);
-
+if exportfig
+    exportgraphics(fig1,'Figure_1.jpg','Resolution',400);
+    exportgraphics(fig2,'Figure_2.jpg','Resolution',400);
+    exportgraphics(fig3,'Figure_3.jpg','Resolution',400);
+end
 
 % mdl = fitlm([hwm.h],[hwm.sim(1).h]);
 % a = mdl.Coefficients.Estimate(1);

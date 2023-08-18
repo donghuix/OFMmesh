@@ -1,6 +1,10 @@
-function Output = SetupEnvironment()
+function [Output, exportfig] = SetupEnvironment()
 
     home = getenv('HOME');
+    exportfig = false;
+    if ~isempty(getenv('exportfig')) && strcmp(getenv('exportfig'),'true')
+        exportfig = true;
+    end
 
     if strcmp(home,'/Users/xudo627')
         disp('Working on local!');
@@ -35,6 +39,8 @@ function Output = SetupEnvironment()
         addpath('/qfs/people/xudo627/m_map/');
         addpath('//qfs/people/xudo627/petsc/share/petsc/matlab/');
         Output = '/compyfs/xudo627/ofm_petsc/Output/';
+        
+        exportfig = flase; % exportgraphics is not available on compy matlab
 
     else
         disp('Need to install necessary packages!')
