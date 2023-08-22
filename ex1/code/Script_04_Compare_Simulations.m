@@ -14,11 +14,11 @@ else
     t0    = datenum(2017,8,26,0,0,0); % Start date
     
     for i = 1 : length(smeshes)
-        mesh = smeshes{i};
+        mesh = [smeshes{i}];
         ssims(i).Name = mesh;
     
         % Read Discharge
-        Qoutlet    = load([Output mesh '/' mesh '.Qoutlet']);
+        Qoutlet    = load([Output mesh '_SR/' mesh '_SR.Qoutlet']);
         ssims(i).t = Qoutlet(:,1)./86400 + t0;
         ssims(i).q = Qoutlet(:,2);
         
@@ -34,7 +34,7 @@ else
         h  = zeros(noc,1);
         FI = zeros(noc,1);
         for j = 1 : nt
-            fnm = [Output mesh '/solution_' num2str(j) '.dat'];
+            fnm = [Output mesh '_SR/solution_' num2str(j) '.dat'];
             disp(['Reading ' mesh ': ' fnm]);
             arr = PetscBinaryRead(fnm);
             arr = reshape(arr, [3, noc]); % [h, uh, vh]
