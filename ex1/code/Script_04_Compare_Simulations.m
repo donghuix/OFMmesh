@@ -2,71 +2,37 @@ clear;close all;clc;
 
 [Output, exportfig] = SetupEnvironment();
 
-smeshes = {'Turning_30m', 'Turning_60m', 'Turning_90m', 'Turning_120m', ...
-           'Turning_180m','Turning_240m','Turning_480m','Turning_990m'};
+smeshes =  {'Turning_30m', 'Turning_60m', 'Turning_90m', 'Turning_120m', ...
+            'Turning_180m','Turning_240m','Turning_480m','Turning_990m'};
+
+umeshes =  {'Turning_30_60_1500_1000_fpx2', ...
+            'Turning_30_60_1500_1000',      ...
+            'Turning_30_90_1500_1000',      ...
+            'Turning_60_90_1500_1000',      ...
+            'Turning_90_90_1500_1000',      ...
+            'Turning_30_90_1500_10000',     ...
+            'Turning_30_90_1500_100000',    ... 
+            'Turning_30_90_1500_1000000',   ...             
+            'Turning_30_90_1500_NoRiver',   ...
+            'Turning_River_Dam_Burn_1150'};
 
 if exist('../data/ssims.mat','file')
     load('../data/ssims.mat');
 else
-
-    nt    = 119;
-    ssims = struct([]);
-    t0    = datenum(2017,8,26,0,0,0); % Start date
-    
-    for i = 1 : length(smeshes)
-        mesh = [smeshes{i}];
-        ssims(i).Name = mesh;
-    
-        % Read Discharge
-        Qoutlet    = load([Output mesh '_SR/' mesh '_SR.Qoutlet']);
-        ssims(i).t = Qoutlet(:,1)./86400 + t0;
-        ssims(i).q = Qoutlet(:,2);
-        
-        % Read coordinates and connectivity from mesh file
-        tri    = ncread(['../structure_meshes/' mesh '.exo'],'connect1');
-        coordx = ncread(['../structure_meshes/' mesh '.exo'],'coordx');
-        coordy = ncread(['../structure_meshes/' mesh '.exo'],'coordy');
-        noc    = size(tri,2); % number of cells
-        trix   = coordx(tri);
-        triy   = coordy(tri); 
-    
-        % Read water depth and flood intensity and find the maximum values
-        h  = zeros(noc,1);
-        FI = zeros(noc,1);
-        for j = 1 : nt
-            fnm = [Output mesh '_SR/solution_' num2str(j) '.dat'];
-            disp(['Reading ' mesh ': ' fnm]);
-            arr = PetscBinaryRead(fnm);
-            arr = reshape(arr, [3, noc]); % [h, uh, vh]
-            tmp1 = arr(1,:);
-            uh   = arr(2,:);
-            vh   = arr(3,:);
-            tmp2 = sqrt(uh.^2 + vh.^2);
-    
-            h    = max([h  tmp1'],[],2);
-            FI   = max([FI tmp2'],[],2);
-        end
-        
-        % interpolate to 30m meshes
-        if i == 1
-            trix0 = trix;
-            triy0 = triy;
-            load('MainChannel_poly.mat');
-            in = inpoly2([mean(trix0)' mean(triy0)'],[polyout.Vertices(:,1) polyout.Vertices(:,2)]);
-            ssims(i).hmax_wholedomain = h;
-            ssims(i).hmax_mainchannel = ssims(i).hmax_wholedomain(in);
-            ssims(i).FI_wholedomain   = FI;
-            ssims(i).FI_mainchannel   = ssims(i).FI_wholedomain(in);
-        else
-            ssims(i).hmax_wholedomain = griddata(mean(trix,1)',mean(triy,1)',h, mean(trix0,1)',mean(triy0,1)');
-            ssims(i).hmax_mainchannel = ssims(i).hmax_wholedomain(in);
-            ssims(i).FI_wholedomain   = griddata(mean(trix,1)',mean(triy,1)',FI,mean(trix0,1)',mean(triy0,1)');
-            ssims(i).FI_mainchannel   = ssims(i).FI_wholedomain(in);
-        end
-    end
-    
+    ssims = read_sims(Output,smeshes);
     save('../data/ssims.mat','ssims');
 end
+
+if exist('../data/usims.mat','file')
+    load('../data/usims.mat');
+else
+    usims = read_sims(Output,umeshes);
+    save('../data/usims.mat','usims');
+end
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -%
+%-v-v-v-v-v-v-v-v-v-v-v-v-v- PLOT START HERE -v-v-v-v-v-v-v-v-v-v-v-v-v-%
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -%
 
 tri    = ncread('../structure_meshes/Turning_30m.exo','connect1');
 coordx = ncread('../structure_meshes/Turning_30m.exo','coordx');
@@ -121,7 +87,7 @@ end
 t2 = tight_axs(ax501,cb2,ax5(1).Position(1),w0,mg,ssims,'FI_wholedomain',letter,labels);
 xlabel(cb2,'Maximum flood intensity [m^{2}/s]','FontSize',15,'FontWeight','bold');
 
-figure(502); set(gcf,'Position',[10 10 1200 800]);
+fig502 = figure(502); set(gcf,'Position',[10 10 1200 800]);
 for i = 1 : 8
     ax502(1+i) = subplot(3,4,4+i);
     patch(trix(:,in),triy(:,in),ssims(i).hmax_mainchannel,'LineStyle','none'); clim([0 12]); hold on
@@ -139,6 +105,7 @@ if exportfig
 end
 
 function t = tight_axs(ax,cb,x0,w0,mg,ssims,varname,letter,labels)
+    %num = {'~3,000,000','750,000','333,333','187,500','83,333','49,682','11,718','2,755'};
     for i = 1 : 4
         % second row
         ax(1+i).Position(3) = w0;
@@ -153,11 +120,13 @@ function t = tight_axs(ax,cb,x0,w0,mg,ssims,varname,letter,labels)
         add_title(ax(i+1),[letter{i} labels{i}],15,'in');
         if i > 1
             [R2,RMSE,~,PBIAS] = estimate_evaluation_metric(ssims(1).(varname),ssims(i).(varname));
-            R2   = round(R2,2);
-            RMSE = round(RMSE,2);
-            str = {['R^{2} = ' num2str(R2)], ['RMSE= ' num2str(RMSE)]};
-            t(i) = add_annot(ax(i+1),str,12,'lr');
+            R2    = round(R2,2);
+            RMSE  = round(RMSE,2);
+            str   = {['R^{2} = ' num2str(R2)], ['RMSE= ' num2str(RMSE)]};
+            t(i)  = add_annot(ax(i+1),str,12,'lr');
         end
+%         tt(i) = add_annot(ax(i+1),num{i},12,'ur');
+%         tt(i).Color = 'r';
     end
 
     cb.Position(1) = ax(6).Position(1);
