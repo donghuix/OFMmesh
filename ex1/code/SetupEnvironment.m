@@ -10,6 +10,7 @@ function [Output, exportfig] = SetupEnvironment()
         disp('Working on local!');
 
         addpath('/Users/xudo627/Developments/mylib/m/');
+        addpath('/Users/xudo627/Developments/mylib/data/');
         addpath('/Users/xudo627/Developments/getPanoply_cMap/');
         % https://github.com/wschwanghart/topotoolbox
         addpath('/Users/xudo627/Developments/ofm_petsc/topotoolbox/');
@@ -29,6 +30,7 @@ function [Output, exportfig] = SetupEnvironment()
         disp('Working on compy!');
         
         addpath('/qfs/people/xudo627/mylib/m/');
+        addpath('/qfs/people/xudo627/mylib/data/');
         addpath('/qfs/people/xudo627/getPanoply_cMap/');
         addpath('/compyfs/xudo627/ofm_petsc/topotoolbox/');
         addpath('/compyfs/xudo627/ofm_petsc/topotoolbox/utilities/');
