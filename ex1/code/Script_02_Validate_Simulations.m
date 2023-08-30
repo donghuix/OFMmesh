@@ -46,16 +46,17 @@ for i = 1:length(gages)
         plot(gages(i).tsim,gages(i).wl,'k-','LineWidth',2); hold on; grid on;
 
         %plot(tsim,hsim(ind1,:),'r-','LineWidth',2); hold on;
-        plot(gages(i).tsim,gages(i).sim(1).h,'b-','LineWidth',2); 
-        plot(gages(i).tsim,gages(i).sim(2).h,'r--','LineWidth',2); 
-        plot(gages(i).tsim,gages(i).sim(3).h,'g--','LineWidth',2); 
+        plot(gages(i).tsim,gages(i).sim(1).h,'b--','LineWidth',2); 
+%         plot(gages(i).tsim,gages(i).sim(2).h,'r--','LineWidth',2); 
+%         plot(gages(i).tsim,gages(i).sim(3).h,'g--','LineWidth',2); 
         if k == 19
-            leg = legend('USGS OBS','Sim','Sim with uniform rainfall','Sim with critical BC');
+            %leg = legend('USGS OBS','Sim','Sim with uniform rainfall','Sim with critical BC');
+            leg = legend('Observation','Simulation');
             leg.FontSize   = 15;
             leg.FontWeight = 'bold';
         end
+        datetick('x','dd'); xlim([gages(i).tsim(1) gages(i).tsim(end)]);
         set(gca,'FontSize',12);
-        datetick('x','dd/mm','keeplimits');
         add_title(gca,['Gauge#' num2str(k)]);
         figure(1);
         plot(gages(i).X,gages(i).Y,'*','Color',[255,69,0]./255,'LineWidth',1.5);
@@ -66,6 +67,11 @@ for i = 1:length(gages)
 end
 leg.Position(1) = axs(15).Position(1);
 leg.Position(2) = axs(19).Position(2) + axs(19).Position(4) - leg.Position(4);
+
+han2=axes(fig2,'visible','off'); 
+han2.YLabel.Visible='on';
+ylabel(han2,'Water level [m]','FontSize',15,'FontWeight','bold');
+han2.Position(1) = han2.Position(1) - 0.01;
 
 hmax = 3; hmin = 0.1;
 fig3 = figure(3);
