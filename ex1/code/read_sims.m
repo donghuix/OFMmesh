@@ -1,8 +1,8 @@
 function sims = read_sims(Output,meshes)
     
-    nt    = 119;
+    nt   = 119;
     sims = struct([]);
-    t0    = datenum(2017,8,26,0,0,0); % Start date
+    t0   = datenum(2017,8,26,0,0,0); % Start date
     
     fname = '../structure_meshes/Turning_30m.exo';
     tri0    = ncread(fname,'connect1');
