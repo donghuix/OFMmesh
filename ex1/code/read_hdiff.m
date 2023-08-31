@@ -57,8 +57,8 @@ for j = 1 : nt
         tmp2 = h_BC_SR' - h_BC';
         tmp3 = h_BC_SR' - h';
         hdiff_BC    = max([hdiff_BC    tmp1],[],2);
-        hdiff_SR    = max([hdiff_SR    tmp1],[],2);
-        hdiff_BC_SR = max([hdiff_BC_SR tmp1],[],2);
+        hdiff_SR    = max([hdiff_SR    tmp2],[],2);
+        hdiff_BC_SR = max([hdiff_BC_SR tmp3],[],2);
     end
 end
 
