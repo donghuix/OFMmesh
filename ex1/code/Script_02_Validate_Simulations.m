@@ -98,6 +98,51 @@ if exportfig
     exportgraphics(fig3,'Figure_3.jpg','Resolution',400);
 end
 
+ % Projection coordinates
+figure;
+proj = projcrs(32610);
+[lat,lon] = projinv(proj,xbnd,ybnd);
+geoplot(lat,lon,'b-','LineWidth',2); hold on;
+geobasemap topographic;
+
+x05 = -96 + 0.5/2 : 0.5 : -95 - 0.5/2;
+y05 = 29 + 0.5/2 : 0.5 : 30 - 0.5/2;
+[x05,y05] = meshgrid(x05,y05);
+[xv,yv] = xc2xv(x05(:),y05(:),0.5,0.5);
+
+for i = 2
+    geoplot([yv(:,i); yv(1,i)],[xv(:,i); xv(1,i)],'r-','LineWidth',1);
+end
+
+Rfiles = dir('/Users/xudo627/Developments/ofm_petsc/Input/Rain/Turning/*.asc');
+R      = NaN(38,77,length(Rfiles));
+for i = 1 : length(Rfiles)
+    Rfilename = fullfile(Rfiles(i).folder,Rfiles(i).name);
+    [R(:,:,i), X, Y] = ascread(Rfilename,[]);
+end
+% figure;
+% for i = 1 : length(Rfiles)
+%     subplot(4,6,i);
+%     imagesc(R(:,:,i));
+% end
+
+Rtri = griddata(X,Y,mean(R,3),mesh.x_tri',mesh.y_tri');
+figure; set(gcf,'Position',[10 10 800 400])
+title('2017-Aug-27 mean rainfall rate [mm/hour]','FontSize',15,'FontWeight','bold');
+patch(mesh.c_x,mesh.c_y,Rtri,'LineStyle','none'); cb = colorbar; axis equal;
+cb.FontSize=13;
+set(gca,'XTick',[],'YTick',[]);
+exportgraphics(gcf,'Figure_y.jpg','Resolution',400);
+
+data = dlmread('Turning.Rain','\t',1, 0);
+t = datenum(data(:,1),data(:,2),data(:,3),data(:,4),ones(168,1),ones(168,1));
+figure;
+bar(t,data(:,5),'k');
+datetick('x','mm/dd','keepticks'); grid on;
+xlim([t(1) t(end-36)]);
+set(gca,'FontSize',13);
+ylabel('Rainfall rate [mm/hour]','FontSize',15,'FontWeight','bold');
+exportgraphics(gcf,'Figure_z.pdf','ContentType','vector');
 % mdl = fitlm([hwm.h],[hwm.sim(1).h]);
 % a = mdl.Coefficients.Estimate(1);
 % b = mdl.Coefficients.Estimate(2);
