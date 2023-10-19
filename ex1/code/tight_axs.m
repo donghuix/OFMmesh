@@ -28,8 +28,8 @@ function [t,R2,RMSE] = tight_axs(ax,cb,x0,w0,mg,sims,varname,letter,labels,ref)
             str   = {['R^{2} = ' num2str(R2(i))], ['RMSE= ' num2str(RMSE(i))]};
             t(i)  = add_annot(ax(i+1),str,12,'lr');
         end
-%         tt(i) = add_annot(ax(i+1),num{i},12,'ur');
-%         tt(i).Color = 'r';
+        %tt(i) = add_annot(ax(i+1),num{i},12,'ur');
+        %tt(i).Color = 'r';
     end
 
     cb.Position(1) = ax(6).Position(1);

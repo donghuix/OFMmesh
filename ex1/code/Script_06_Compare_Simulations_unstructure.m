@@ -50,7 +50,7 @@ fig7 = figure(7); set(gcf,'Position',[10 10 1200 800]);
 ax7(1) = subplot(3,4,[1 2 3 4]);
 plot(ssims(1).t,ssims(1).q,'-','Color',colorblind(1,:),'LineWidth',3); hold on; grid on;
 for i = 1 : length(usims)
-    plot(usims(i).t,usims(i).q,'-','Color',colorblind(1,:),'LineWidth',2); 
+    plot(usims(i).t,usims(i).q,'-','Color',colorblind(i+1,:),'LineWidth',2); 
     [qR2(i),qRMSE(i)] = estimate_evaluation_metric(ssims(1).q(:),usims(i).q(:));
     set(gca,'FontSize',14); ylim([-100 8000]);
 end
