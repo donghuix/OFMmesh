@@ -56,3 +56,47 @@ else
     
     save('../data/rain.mat','rains');
 end
+
+load('../data/ssims.mat');
+
+load('colorblind_colormap.mat');
+colorblind(3,:) = colorblind(12,:);
+colorblind(9,:) = colorblind(11,:);
+
+figure;
+plot(ssims(1).t,ssims(1).q,'k-','LineWidth',2); hold on; grid on;
+for i = 1 : length(rains)
+    plot(rains(i).t,rains(i).q,'-','Color',colorblind(i+1,:),'LineWidth',2); 
+end
+datetick('x','keeplimits');
+ylabel('Discharge [m^{3}/s]','FontSize',15,'FontWeight','bold');
+legend('MRMS','NLDAS','daymet');
+
+tri    = ncread('../structure_meshes/Turning_30m.exo','connect1');
+coordx = ncread('../structure_meshes/Turning_30m.exo','coordx');
+coordy = ncread('../structure_meshes/Turning_30m.exo','coordy');
+trix   = coordx(tri);
+triy   = coordy(tri); 
+cmap = getPanoply_cMap('NEO_modis_lst');
+
+figure;
+ax(1+i) = subplot(1,3,1);
+patch(trix,triy,ssims(1).hmax_wholedomain,'LineStyle','none'); clim([0 12]);
+colormap(gca,cmap);
+for i = 1 : 2
+    ax(1+i) = subplot(1,3,i+1);
+    patch(trix,triy,rains(i).hmax_wholedomain,'LineStyle','none'); clim([0 12]);
+    set(gca,'XTick',[],'YTick',[]); colormap(gca,cmap);
+
+    [R2(i),RMSE(i),~,PBIAS(i)] = estimate_evaluation_metric(ssims(1).hmax_wholedomain,rains(i).hmax_wholedomain);
+
+    if i == 8
+        cb = colorbar('south');
+    end
+end
+
+
+
+figure;
+histogram(ssims(1).hmax_wholedomain); hold on;
+histogram(rains(1).hmax_wholedomain);
