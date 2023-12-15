@@ -1,5 +1,5 @@
 function [t,R2,RMSE] = tight_axs(ax,cb,x0,w0,mg,sims,varname,letter,labels,ref)
-    %num = {'~3,000,000','750,000','333,333','187,500','83,333','49,682','11,718','2,755'};
+    num = {'~3,000,000','750,000','333,333','187,500','83,333','49,682','11,718','2,755'};
     %num = {'664,724','427,478','254,953','148,514','109,358','58,749','14,536','~3,000'};
     for i = 1 : 4
         % second row
@@ -28,8 +28,8 @@ function [t,R2,RMSE] = tight_axs(ax,cb,x0,w0,mg,sims,varname,letter,labels,ref)
             str   = {['R^{2} = ' num2str(R2(i))], ['RMSE= ' num2str(RMSE(i))]};
             t(i)  = add_annot(ax(i+1),str,12,'lr');
         end
-        %tt(i) = add_annot(ax(i+1),num{i},12,'ur');
-        %tt(i).Color = 'r';
+        tt(i) = add_annot(ax(i+1),num{i},12,'ur');
+        tt(i).Color = 'r';
     end
 
     cb.Position(1) = ax(6).Position(1);

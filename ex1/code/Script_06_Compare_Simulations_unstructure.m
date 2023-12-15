@@ -98,7 +98,7 @@ for i = 1 : 8
 end
 semilogx(numc2,structure.qR2(2:end),'ko--','LineWidth',1.5); 
 ylim([0 1]); set(gca,'FontSize',13);
-add_title(ax8(1),'(a). Discharge');
+
 ylabel('R^{2}','FontSize',15,'FontWeight','bold');
 
 ax8(2) = subplot(1,3,2); 
@@ -107,7 +107,6 @@ for i = 1 : 8
 end
 semilogx(numc2,structure.R2(2:end),'ko--','LineWidth',1.5); 
 ylim([0 1]); set(gca,'FontSize',13);
-add_title(ax8(2),'(b). Maximum Inundation Depth');
 xlabel('Number of cells','FontSize',15,'FontWeight','bold');
 
 ax8(3) = subplot(1,3,3);
@@ -116,7 +115,6 @@ for i = 1 : 8
 end
 h(length(numc)+1) = semilogx(numc2,structure.R23(2:end),'ko--','LineWidth',1.5); 
 ylim([0 1]); set(gca,'FontSize',13);
-add_title(ax8(3),'(c). Maximum Inundation Depth in Main Channel');
 
 leg = legend(h,[labels(2:end), 'Uniform Meshes']);
 leg.FontSize = 15;
@@ -125,6 +123,9 @@ ax8(3).Position(1) = ax8(3).Position(1) - 0.070;
 leg.Position(1) = ax8(3).Position(1) + ax8(3).Position(3) + 0.01;
 leg.Position(2) = ax8(3).Position(2);
 leg.Position(4) = ax8(3).Position(4);
+add_title(ax8(1),'(a). Discharge');
+add_title(ax8(2),'(b). Maximum Inundation Depth');
+add_title(ax8(3),'(c). Maximum Inundation Depth in Main Channel');
 
 if exportfig
     %exportgraphics(fig5,'Figure_5.pdf','ContentType','vector');

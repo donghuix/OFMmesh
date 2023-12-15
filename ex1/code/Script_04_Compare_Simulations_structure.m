@@ -42,7 +42,7 @@ triy   = coordy(tri);
 load('MainChannel_poly.mat');
 in = inpoly2([mean(trix)' mean(triy)'],[polyout.Vertices(:,1) polyout.Vertices(:,2)]);
 
-letter = {'(a). ', '(b). ', '(c). ', '(d). ', '(e). ', '(f). ', '(g). ', '(h). ', '(i). '};
+letter = {'(b). ', '(c). ', '(d). ', '(e). ', '(f). ', '(g). ', '(h). ', '(i). '};
 labels = {'30m','60m','90m','120m','180m','250m','500m','1,000m'};
 load('colorblind_colormap.mat');
 
