@@ -156,6 +156,11 @@ bcode(iout) = 2;
 
 b_tri = bcode(DT)';
 PetscBinaryWrite('mississippi.bcode',b_tri(:));
+
+[nlcd,metadata] = readgeoraster('../data/nlcd_2021_land_cover_l48_20230630/nlcd_2021_land_cover_l48_20230630.img');
+[coordx,coordy] = projfwd(metadata.ProjectedCRS,coordy,coordx);
+coordx = coordx + 1.5*1e6;
+
 write_exodus_file(coordx, coordy, coordz, DT, 'mississippi.exo');
 % 
 % if exist('mississippi_rivers.mat','file')
