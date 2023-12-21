@@ -1,7 +1,11 @@
 clear;close all;clc;
 
-addpath('/Users/xudo627/Developments/mylib/m/');
+home = SetupEnvironment();
 
+% NOTE:
+% project degree to m
+% [x, y] = projfwd(metadata.ProjectedCRS,lat,lon);
+%
 
 vals = [11;12;21;22;23;24;31;41;42;43;51;52;71;72;81;82;90;95];
 class =  {'Open Water', 'Perennial Ice and Snow','Developed, Open Space', ...
@@ -13,10 +17,11 @@ manning = [0.038; 0.038; 0.040; 0.090; 0.120; 0.160; 0.027; 0.150; 0.120; 0.140;
            0.038; 0.115; 0.038; 0.038; 0.038; 0.035; 0.098; 0.068];
 
 
-if exist('nlck1km.mat','file')
-    load('nlck1km.mat');
+if exist('../data/nlcd_2021_land_cover_l48_20230630/nlck1km.mat','file')
+    load('../data/nlcd_2021_land_cover_l48_20230630/nlck1km.mat');
 else
-    [nlcd,metadata] = readgeoraster('nlcd_2021_land_cover_l48_20230630.img');
+    % Upscale the National Land Cover Dataset to 1km resolution
+    [nlcd,metadata] = readgeoraster('../data/nlcd_2021_land_cover_l48_20230630/nlcd_2021_land_cover_l48_20230630.img');
     nlcd = nlcd(1:104412,1:161172);
     nlcd1km = NaN(104412/33,161172/33);
     for i = 1 : 3164
@@ -56,5 +61,20 @@ end
 
 [x1km,y1km] = meshgrid(x1km,y1km);
 
-% project degree to m
-% [x, y] = projfwd(metadata.ProjectedCRS,lat,lon);
+coordx = ncread('../inputdata/mississippi.exo','coordx');
+coordy = ncread('../inputdata/mississippi.exo','coordy');
+tri    = ncread('../inputdata/mississippi.exo','connect1');
+
+idx = knnsearch([x1km(:)+ 1.5*1e6 y1km(:)], [coordx coordy]);
+
+N = nlcd1km(idx);
+if strcmp(home,'/Users/xudo627')
+    figure 
+    patch(coordx(tri),coordy(tri),nanmean(N(tri)),'LineStyle','none'); colorbar;
+end
+
+N3 = zeros(3,length(N));
+N3(1,:) = N;
+PetscBinaryWrite('../inputdata/mississippi_manning.dat',N3(:));
+
+
