@@ -22,16 +22,16 @@ function [gages,hwm,mesh] = read_depth(gages,hwm,names,Output,ngrids)
 
     % Identify index in mesh for the USGS and HWM 
     for i = 1 : length(gages)
-        gages(i).idx = NaN(ngrids,1);
+        gages(i).idx = NaN(200,1);
         dist  = (mesh.x_tri - gages(i).X).^2 + (mesh.y_tri - gages(i).Y).^2;
         [~,I] = sort(dist,'ascend');
-        gages(i).idx = I(1:ngrids);
+        gages(i).idx = I(1:200);
     end
-    hwm.idx = NaN(length(hwm.X),ngrids);
+    hwm.idx = NaN(length(hwm.X),200);
     for i = 1 : length(hwm.X)
         dist  = (mesh.x_tri - hwm.X(i)).^2 + (mesh.y_tri - hwm.Y(i)).^2;
         [~,I] = sort(dist,'ascend');
-        hwm.idx(i,:) = I(1:ngrids);
+        hwm.idx(i,:) = I(1:200);
     end
 
     % Read OFM outputs

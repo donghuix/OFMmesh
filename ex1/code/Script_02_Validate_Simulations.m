@@ -1,6 +1,8 @@
 clear;close all;clc;
 
 [Output, exportfig] = SetupEnvironment();
+proj = projcrs(32610);
+
 if exist('aux.mat','file')
     load('aux.mat');
 else
@@ -11,7 +13,7 @@ names = {'Turning_30m','Turning_30m_SR','Turning_30m_noBC_SR'};
 if exist('../data/depth.mat','file')
     load('../data/depth.mat');
 else
-    [gages,hwm,mesh] = read_depth(gages,hwm,names,Output,200);
+    [gages,hwm,mesh] = read_depth(gages,hwm,names,Output,100);
     save('../data/depth.mat','xbnd','ybnd','gages','hwm','mesh','dams');
 end
 
@@ -23,18 +25,25 @@ if Pix_SS(3)/Pix_SS(4) > 1.6
     fd(2) = 1000;
 end
 
-fig1 = figure(1); set(gcf,'Position',[10 10 1200 800]);
+fig1 = figure(1); set(gcf,'Position',[10 10 1200 600]);
 cmap = getPanoply_cMap('GIST_earth');
-patch(mesh.c_x,mesh.c_y,mesh.z_tri,'LineStyle','none'); hold on;
+[lat,lon] = projinv(proj,mesh.c_x,mesh.c_y);
+%patch(mesh.c_x,mesh.c_y,mesh.z_tri,'LineStyle','none'); hold on;
+patch(lon,lat,mesh.z_tri,'LineStyle','none'); hold on;
+set(gca,'Color',[0.75 0.75 0.75],'FontSize',15);
 colormap(cmap); 
 cb = colorbar;
 cb.FontSize = 15; 
+xlabel(cb,'Elevation [m]','FontSize',18,'FontWeight','bold');
 % Add locations of HWM
-plot([hwm.X],[hwm.Y],'wx','LineWidth',1);
-set(gca,'Color',[0.75 0.75 0.75]);
+[lat,lon] = projinv(proj,[hwm.X],[hwm.Y]);
+plot(lon,lat,'wx','LineWidth',1.5,'MarkerSize',8);
 % Add dams
-plot(dams(1).X,dams(1).Y,'k-','LineWidth',2); 
-plot(dams(2).X,dams(2).Y,'k-','LineWidth',2); 
+[lat,lon] = projinv(proj,dams(1).X,dams(1).Y);
+plot(lon,lat,'k-','LineWidth',2); 
+[lat,lon] = projinv(proj,dams(2).X,dams(2).Y);
+plot(lon,lat,'k-','LineWidth',2); 
+ylim([29.68 29.96]); xlim([-95.975 -95.25]);
 
 fig2 = figure(2); set(gcf,'Position',[10 10 1200 800],'renderer','Painters');
 k = 1;
@@ -49,6 +58,7 @@ for i = 1:length(gages)
         plot(gages(i).tsim,gages(i).sim(1).h,'b--','LineWidth',2); 
 %         plot(gages(i).tsim,gages(i).sim(2).h,'r--','LineWidth',2); 
 %         plot(gages(i).tsim,gages(i).sim(3).h,'g--','LineWidth',2); 
+        [R2(k),RMSE(k),NSE(k)] = estimate_evaluation_metric(gages(i).wl(:),gages(i).sim(1).h(:));
         if k == 19
             %leg = legend('USGS OBS','Sim','Sim with uniform rainfall','Sim with critical BC');
             leg = legend('Observation','Simulation');
@@ -58,10 +68,21 @@ for i = 1:length(gages)
         datetick('x','dd'); xlim([gages(i).tsim(1) gages(i).tsim(end)]);
         set(gca,'FontSize',12);
         add_title(gca,['Gauge#' num2str(k)]);
+        strs = {['\rho = ' num2str(round(sqrt(R2(k)),2)) ','], ['NSE = ' num2str(NSE(k))]};
+        t2(k) = add_title(axs(k),strs,13,'in');
+        %t2(k).Position(1) = t2(k).Position(1) -0.5 + t2(k).Position(3)/2;
+        pos = get(axs(k),'Position');
+        t2(k).Position(1) = t2(k).Position(1) + 0.03;
+        t2(k).Position(2) = pos(2)-0.04;
+        t2(k).Color = 'b'; 
+
         figure(1);
-        plot(gages(i).X,gages(i).Y,'*','Color',[255,69,0]./255,'LineWidth',1.5);
-        t(k) = text(gages(i).X+500,gages(i).Y,['#' num2str(k)],'Color', ...
+        [lat,lon] = projinv(proj,gages(i).X,gages(i).Y);
+        plot(lon,lat,'*','Color',[255,69,0]./255,'LineWidth',1.5);
+        [lat,lon] = projinv(proj,gages(i).X+500,gages(i).Y);
+        t(k) = text(lon,lat,['#' num2str(k)],'Color', ...
                     [255,69,0]./255,'FontSize',14,'FontWeight','bold');
+        
         k = k + 1;
     end
 end
@@ -93,14 +114,16 @@ xlabel('High Water Marks [m]','FontSize',15,'FontWeight','bold');
 ylabel('Simulation [m]','FontSize',15,'FontWeight','bold');
 
 if exportfig
+    % exportgraphics(fig1,'Figure_1.pdf','ContentType','image');
+    % To crop the margins, use the following command
+    % pdfcrop --margins '-85 -35 -75 -35' Figure_1.pdf
     exportgraphics(fig1,'Figure_1.jpg','Resolution',400);
-    exportgraphics(fig2,'Figure_2.jpg','Resolution',400);
-    exportgraphics(fig3,'Figure_3.jpg','Resolution',400);
+    exportgraphics(fig2,'Figure_3.pdf','ContentType','vector');
+    exportgraphics(fig3,'Figure_4.pdf','ContentType','vector');
 end
 
  % Projection coordinates
 figure;
-proj = projcrs(32610);
 [lat,lon] = projinv(proj,xbnd,ybnd);
 geoplot(lat,lon,'b-','LineWidth',2); hold on;
 geobasemap topographic;
